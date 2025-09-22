@@ -31,7 +31,7 @@ function onFormSubmit(e) {
       '(Head Counselor) Matta': 'Orlando.Matta@nisd.net'
     };
 
-    // Map counselor names to their corresponding emails - UPDATED to match form exactly
+    // Used for testing. Map counselor names to testing email.
     // let counselorEmails = {
     //   '(A-C) Appleby': 'alvaro.gomez@nisd.net',
     //   '(D-Ha) Hewgley': 'alvaro.gomez@nisd.net',
