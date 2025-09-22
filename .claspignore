@@ -1,0 +1,35 @@
+# Ignore everything by default
+**
+
+# But NOT these files (negate the ignore)
+!appsscript.json
+!*.js
+!*.gs
+
+# Ignore node modules and dependencies
+node_modules/
+
+# Ignore logs and temp files
+*.log
+*.tmp
+*~
+
+# Ignore VS Code settings
+.vscode/
+
+# Ignore Mac system files
+.DS_Store
+
+# Ignore test and build output
+coverage/
+dist/
+build/
+/test-output/
+
+# Ignore environment files
+.env
+.env.*
+
+# Ignore lock files
+package-lock.json
+yarn.lock
