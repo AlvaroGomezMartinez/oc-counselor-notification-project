@@ -1,6 +1,6 @@
 // The following script works along with a Google Form that students submit when they request to meet with a counselor.
 // There is a trigger that is set to send the emails out when a form is submitted to this sheet.
-// Point of contact is: Alvaro Gomez, Special Campuses Academic Technology Coach, 210-363-1577
+// Point of contact is: Alvaro Gomez, Special Campuses Academic Technology Coach, 210-397-9408, 210-363-1577
 // If you want to watch a Screencastify talking through this script follow this link: https://app.screencastify.com/v3/watch/ue27Z389KgH2KnefoM0r
 
 function onFormSubmit(e) {
@@ -15,38 +15,42 @@ function onFormSubmit(e) {
     let responses = e.values;
 
     // Log the form responses
-    Logger.log("Form Responses: ", responses);
+    Logger.log("Form Responses: " + JSON.stringify(responses));
 
     // Specify the column index of the counselor selection question
     let counselorColumnIndex = 7;
 
-    // Map counselor names to their corresponding emails
-    let counselorEmails = {
-      '(A-C) Appleby': 'janelle.appleby@nisd.net',
-      '(D-Ha) Hewgley': 'shanna.hewgley@nisd.net',
-      '(He-Mi) Ramos': 'elizabeth.ramos@nisd.net',
-      '(Mo-R) Clarke': 'orlando.matta@nisd.net',
-      '(S-Z) Pearson': 'samantha.pearson@nisd.net',
-      '(ASTA-All Ag Students) Zablocki': 'pamela.zablocki@nisd.net',
-      '(Head Counselor) Matta': 'Orlando.Matta@nisd.net'
-    };
-
-    // Used for testing. Map counselor names to testing email.
+    // This is a map of counselor names to their corresponding emails. The keys have to match exactly how the options are in the Google Form.
     // let counselorEmails = {
-    //   '(A-C) Appleby': 'alvaro.gomez@nisd.net',
-    //   '(D-Ha) Hewgley': 'alvaro.gomez@nisd.net',
-    //   '(He-Mi) Ramos': 'alvaro.gomez@nisd.net',
-    //   '(Mo-R) Clarke': 'alvaro.gomez@nisd.net',
-    //   '(S-Z) Pearson': 'alvaro.gomez@nisd.net',
-    //   '(ASTA-All Ag Students) Zablocki': 'alvaro.gomez@nisd.net',
-    //   '(Head Counselor) Matta': 'alvaro.gomez@nisd.net'
+    //   '(A - C) Appleby': 'janelle.appleby@nisd.net',
+    //   '(D - Ha) Hewgley': 'shanna.hewgley@nisd.net',
+    //   '(He - Mi) Ramos': 'elizabeth.ramos@nisd.net',
+    //   '(Mo - R) Clarke': 'orlando.matta@nisd.net',
+    //   '(S - Z) Pearson': 'samantha.pearson@nisd.net',
+    //   '(ASTA-All Ag Students) Zablocki': 'pamela.zablocki@nisd.net',
+    //   '(Head Counselor) Matta': 'Orlando.Matta@nisd.net'
     // };
 
+    // Used for testing. Remember to comment out the CC in the MailApp.sendEmail function below.
+    let counselorEmails = {
+      '(A - C) Appleby': 'alvaro.gomez@nisd.net',
+      '(D - Ha) Hewgley': 'alvaro.gomez@nisd.net',
+      '(He - Mi) Ramos': 'alvaro.gomez@nisd.net',
+      '(Mo - R) Clarke': 'alvaro.gomez@nisd.net',
+      '(S - Z) Pearson': 'alvaro.gomez@nisd.net',
+      '(ASTA-All Ag Students) Zablocki': 'alvaro.gomez@nisd.net',
+      '(Head Counselor) Matta': 'alvaro.gomez@nisd.net'
+    };
+
     // Get the selected counselor's name from the response
-    let counselorName = responses[counselorColumnIndex - 1];
+    let counselorName = responses[counselorColumnIndex - 1].trim();
 
     // Get the counselor's email based on the selected name
     let counselorEmail = counselorEmails[counselorName];
+    // Checks if the counselor's email was found
+    if (!counselorEmail) {
+      throw new Error(`Could not find an email for counselor. Please check for a typo or mismatch between the Google Form dropdown option selected: "${responses[6]}" and the counselorEmails map value: "${counselorName}" in the script. Both have to match exactly (e.g. spaces, punctuation, etc.) for the email to send.`);
+    }
 
     // Get other relevant information from the form responses
     let studentEmail = responses[1]; // Col B
@@ -62,7 +66,7 @@ function onFormSubmit(e) {
     // Send the email to the selected counselor
     MailApp.sendEmail({
       to: counselorEmail,
-      cc: "ydette.cothran@nisd.net",
+      // cc: "ydette.cothran@nisd.net",
       subject: subject,
       body: body
     });
@@ -93,11 +97,11 @@ function sendErrorNotificationEmail(error) {
                    `Time of Error: ${new Date().toLocaleString()}`;
 
     // Log details about the error notification email
-    Logger.log("Error Notification Email Details:", {
+    Logger.log("Error Notification Email Details:" + JSON.stringify({
       to: adminEmail,
       subject: errorSubject,
       body: errorBody
-    });
+    }));
 
     // Send the error notification email
     MailApp.sendEmail({
@@ -107,6 +111,6 @@ function sendErrorNotificationEmail(error) {
     });
   } catch (e) {
     // Log any additional error that might occur during the error notification process
-    Logger.log("Error in sending error notification email:", e);
+    Logger.log("Error in sending error notification email:" + e);
   }
 }
